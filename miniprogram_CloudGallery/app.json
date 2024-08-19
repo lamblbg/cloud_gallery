@@ -1,0 +1,20 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/selectalbum/selectalbum",
+        "pages/uploadsetting/uploadsetting",
+        "pages/upload/upload",
+        "pages/register/register"
+    ],
+    "usingComponents": {
+        "van-button": "@vant/weapp/button/index"
+    },
+    "window": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "云图廊",
+        "navigationBarBackgroundColor": "#ffffff"
+    },
+    "componentFramework": "glass-easel",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents"
+}

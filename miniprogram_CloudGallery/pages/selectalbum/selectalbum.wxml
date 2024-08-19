@@ -1,0 +1,9 @@
+<view class="container">
+    <view class="item" wx:for="{{albums}}" data-albumId="{{item._id}}" bind:tap="onSelect">
+        <image src="{{item.cover}}" mode="aspectFill" />
+        <view class="info">
+            <p>{{item.name}}</p>
+            <span>{{item.mediaCount}}张</span>
+        </view>
+    </view>
+</view>

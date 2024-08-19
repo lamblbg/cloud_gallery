@@ -1,0 +1,45 @@
+page {
+  box-sizing: border-box;
+  padding: 0 0.5em;
+}
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.container scroll-view {
+  padding-top: 1.5em;
+}
+.container scroll-view .header {
+  display: flex;
+  justify-content: space-between;
+}
+.container scroll-view .header > span {
+  font-weight: bolder;
+}
+.container scroll-view .header .right {
+  display: flex;
+}
+.container scroll-view .header .right .info {
+  display: flex;
+  flex-direction: column;
+}
+.container scroll-view .header .right .info span:nth-child(2) {
+  font-size: 0.1em;
+}
+.container scroll-view .header .right image {
+  margin: 0 0.5em;
+  width: 50px;
+  height: 50px;
+}
+.container scroll-view .new,
+.container scroll-view .files {
+  margin-top: 2em;
+}
+.container scroll-view .new {
+  font-size: 0.5em;
+}
+.container .upload_btn {
+  margin-bottom: 0.5em;
+}

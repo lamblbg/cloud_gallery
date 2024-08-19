@@ -1,0 +1,13 @@
+<!--pages/register/register.wxml-->
+<view class="container">
+    <form bindsubmit="onSubmit">
+        <span>账号密码登录</span>
+        <input name="account" type="nickname" placeholder="请输入账号" />
+        <input name="password" type="password" placeholder="请输入登录密码" />
+        <view class="agressment">
+            <van-checkbox value="{{ true }}" bind:change="onChange" icon-size="12px">首次登录自动注册</van-checkbox>
+        </view>
+        <van-button form-type="submit" class="upload_btn" type="info" block round>登录</van-button>
+    </form>
+</view>
+<van-toast id="van-toast" />

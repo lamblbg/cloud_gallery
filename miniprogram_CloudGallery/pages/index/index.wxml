@@ -1,0 +1,14 @@
+<!--index.wxml-->
+<scroll-view class="scrollarea" scroll-y type="list">
+    <h1 style="font-weight: bolder;">我的相册</h1>
+    <view class="container">
+        <view class="item" wx:for="{{albums}}">
+            <image src="{{item.cover}}" mode="aspectFill" />
+            <p>{{item.name}}</p>
+            <span>{{item.mediaCount}}张</span>
+        </view>
+    </view>
+</scroll-view>
+<button class="add"  bind:tap="onAdd"><van-icon name="plus" /></button>
+<!-- <van-button class="add" type="info" icon="plus" round bind:click="onAdd" /> -->
+<van-action-sheet show="{{ show }}" actions="{{ actions }}" cancel-text="取消" close-on-click-action="{{true}}" bind:close="onClose" bind:cancel="onClose" bind:select="onSelect" />

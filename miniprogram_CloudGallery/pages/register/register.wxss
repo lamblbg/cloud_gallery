@@ -1,0 +1,25 @@
+page {
+  box-sizing: border-box;
+  padding: 1.5em;
+}
+.container span {
+  font-weight: bolder;
+  font-size: 1.5em;
+}
+.container input {
+  height: 30px;
+  border-bottom: 1px solid #ccc;
+  font-size: 1em;
+}
+.container .agressment {
+  font-size: 12px;
+}
+.container input {
+  margin-top: 1.5em;
+}
+.container .agressment {
+  margin-top: 1.5em;
+}
+.container button {
+  margin-top: 0.5em;
+}
