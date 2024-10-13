@@ -4,6 +4,7 @@ page {
   flex-direction: column;
   box-sizing: border-box;
   padding: 0 0.5em;
+  position: relative;
 }
 .scrollarea {
   flex: 1;
@@ -41,9 +42,8 @@ page {
   position: absolute;
   bottom: 20px;
   right: 20px;
-  width: 50px;
-  height: 50px;
   background-color: #1989fa;
-  border-radius: 50%;
   color: #fff;
+  border-radius: 50%;
+  box-shadow: 2px 1px 10px #1989fa;
 }

@@ -5,5 +5,25 @@
     "compileHotReLoad": true,
     "urlCheck": false,
     "bigPackageSizeSupport": false
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/uploadsetting/uploadsetting",
+          "pathName": "pages/uploadsetting/uploadsetting",
+          "query": "show=true",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/register/register",
+          "pathName": "pages/register/register",
+          "query": "",
+          "launchMode": "default",
+          "scene": 1000
+        }
+      ]
+    }
   }
 }

@@ -24,5 +24,17 @@ class mediaService {
             return 1
         }
     }
+
+    async findAllMediaByAlbumId(albumId, skip, limit) {
+        try {
+            const res = await MediaModel.findAllMediaByAlbumId(albumId, skip, limit)
+            if (res.length > 0)
+                return res
+            else
+                return -1
+        } catch (error) {
+            return -1
+        }
+    }
 }
 module.exports = new mediaService();

@@ -1,0 +1,26 @@
+page {
+  box-sizing: border-box;
+  padding: 0 0.5em;
+}
+.album_name {
+  font-weight: 600;
+  font-size: larger;
+}
+.container {
+  margin-top: 20rpx;
+}
+.container .group {
+  margin-bottom: 50rpx;
+}
+.container .group .medias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  width: 100%;
+  gap: 4px;
+  margin: 10px 0;
+}
+.container .group .medias image {
+  width: 150px;
+  height: 120px;
+  margin-top: 10rpx;
+}

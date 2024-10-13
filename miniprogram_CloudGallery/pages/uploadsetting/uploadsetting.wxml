@@ -1,4 +1,10 @@
-<!--pages/uploadsetting/uploadsetting.wxml-->
+<van-overlay show="{{ show }}" bind:click="onClickHide">
+    <view class="wrapper">
+        <view class="block" catch:tap="noop">
+            正在上传...{{progress}}%
+        </view>
+    </view>
+</van-overlay>
 <view class="view" class="container">
     <scroll-view scroll-y style="max-height: 85vh;">
         <view wx:if="{{isSelectAlbum}}" class="select_album">
@@ -21,7 +27,7 @@
         </view>
 
         <view wx:else class="create_new_album">
-            <input type="text" placeholder="请输入相册名" bindinput="handleInput"/>
+            <input type="text" placeholder="请输入相册名" bindinput="handleInput" />
             <view class="new" bind:tap="onCreateOrSelect">选择相册</view>
         </view>
 

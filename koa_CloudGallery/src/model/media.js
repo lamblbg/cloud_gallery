@@ -77,6 +77,10 @@ class MediaModel {
     async delete(mediaId) {
         return await this.Media.updateOne({ _id: mediaId }, { isDeleted: true })
     }
+
+    async findAllMediaByAlbumId(albumId, skip, limit) {
+        return await this.Media.find({ albumId }).skip(skip).limit(limit)
+    }
 }
 
 module.exports = new MediaModel();

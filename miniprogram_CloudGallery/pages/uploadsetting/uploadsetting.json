@@ -1,7 +1,8 @@
 {
-  "usingComponents": { 
-    "van-icon": "@vant/weapp/icon/index",
-    "van-uploader": "@vant/weapp/uploader/index"
-  },
-  "navigationBarTitleText": "上传"
+    "usingComponents": {
+        "van-icon": "@vant/weapp/icon/index",
+        "van-uploader": "@vant/weapp/uploader/index",
+        "van-overlay": "@vant/weapp/overlay/index"
+    },
+    "navigationBarTitleText": "上传"
 }

@@ -1,4 +1,5 @@
-import eventBus from '../../utils/eventBus';
+import eventBus from '@/utils/eventBus';
+import http from '@/utils/http.js'
 
 Page({
     data: {
@@ -16,17 +17,20 @@ Page({
         albums: []
     },
 
-    requestAlbums() {
-        wx.request({
-            url: 'http://127.0.0.1:3001/album/all',
-            method: 'GET',
-            success: (res) => {
-                this.setData({ albums: res.data.data })
-            },
-            fail: (err) => {
-                console.log(err)
-            }
+    onClick(e) {
+        wx.navigateTo({
+            url: '/pages/photo/photo',
+        }).then(() => {
+            let clickAblum = e.currentTarget.dataset.album
+            eventBus.$emit('clickAblum', clickAblum);
         })
+    },
+
+    async requestAlbums() {
+        let res = await http.get('/album/all')
+        if (res.data && res.data.code === 0) {
+            this.setData({ albums: res.data.data })
+        }
     },
 
     onShow() {
@@ -34,7 +38,7 @@ Page({
     },
 
     onLoad() {
-        this.requestAlbums()
+        // this.requestAlbums()
     },
 
     onClose(event) {
@@ -45,34 +49,22 @@ Page({
         this.setData({ show: true });
     },
 
-    onSelect(event) {
-        const { index } = event.detail
-        this.onChooseMedia()
-    },
-
-    // 选择文件
-    onChooseMedia: function () {
-        return new Promise(resolve => {
-            wx.chooseMedia({
+    async onSelect(event) {
+        try {
+            let res = await wx.chooseMedia({
                 count: 9,
                 mediaType: ['image', 'video'],
                 sourceType: ['album', 'camera'],
                 maxDuration: 30,
                 camera: 'back',
-                success: (res) => resolve(res.tempFiles)
             })
-        })
-            .then(allTemporaryFile => {
-                wx.navigateTo({
-                    url: '/pages/uploadsetting/uploadsetting',
-                    success: (res) => {
-                        eventBus.$emit('getChooseAlbum', this.data.albums[0]);
-                        eventBus.$emit('getAllTemporaryFile', allTemporaryFile);
-                    },
-                    fail: function (err) {
-                        console.log(err)
-                    }
-                })
+            let allTemporaryFile = res.tempFiles
+            await wx.navigateTo({
+                url: '/pages/uploadsetting/uploadsetting'
             })
+            eventBus.$emit('getChooseAlbum', this.data.albums[0]);
+            eventBus.$emit('getAllTemporaryFile', allTemporaryFile);
+        } catch (error) {
+        }
     },
 })

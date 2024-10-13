@@ -1,5 +1,0 @@
-{
-  "usingComponents": {
-    "van-uploader": "@vant/weapp/uploader/index"
-  }
-}

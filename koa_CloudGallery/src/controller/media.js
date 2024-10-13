@@ -46,6 +46,28 @@ class mediaController {
         ctx.body = result
     } 
 
+    async findAllMediaByAlbumId(ctx, next) {
+        const { albumId, skip, limit } = ctx.request.query
+        let result = null
+        try {
+            if (albumId) {
+                const res = await mediaService.findAllMediaByAlbumId(albumId, skip, limit)
+                if (res !== -1)
+                    result = { code: 0, message: '查找成功', data: res }
+                else
+                    result = { code: 1, message: '查找失败' }
+            }
+            else {
+                ctx.status = 400
+                result = { code: 2, message: '缺少必要的信息' }
+            }
+        } catch (error) {
+            ctx.status = 500
+            result = { code: -1, message: '服务器内部错误：' + error.message }
+        }
+        ctx.body = result
+    } 
+
 }
 
 module.exports = new mediaController();

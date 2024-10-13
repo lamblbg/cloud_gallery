@@ -1,5 +1,7 @@
-import uploadHandler from '../../utils/file-upload.js'
-import eventBus from '../../utils/eventBus.js'
+import { uploadHandler, merge } from '@/utils/file-upload.js'
+import eventBus from '@/utils/eventBus.js'
+import http from '@/utils/http.js'
+
 Page({
     data: {
         fileList: [],
@@ -7,123 +9,71 @@ Page({
         isSelectAlbum: true,
         currentAlbumId: '',
         currentAlbum: '',
-        albumName: ''
+        albumName: '',
+        show: false,
+        progress: 0
     },
 
-    // 确认上传
-    onUpload(event) {
-
+    // 确认上传按钮
+    async onUpload(event) {
+        // 如果是选择创建新相册
         if (!this.data.isSelectAlbum) {
             // 创建新相册
-            new Promise((resolve, reject) => {
-                wx.request({
-                    url: 'http://127.0.0.1:3001/album/create',
-                    method: 'POST',
-                    data: {
-                        userId: 'lamb',
-                        albumName: this.data.albumName
-                    },
-                    success: (res) => {
-                        resolve(res.data)
-                    },
-                    fail: (err) => {
-                        reject(err)
-                    }
-                })
+            let { data: result } = await http.request({
+                url: '/album/create',
+                method: 'POST',
+                data: {
+                    userId: 'lamb',
+                    albumName: this.data.albumName
+                }
             })
-                // 拿到新相册id
-                .then((res) => {
-                    const currentAlbumId = res.data._id
-                    this.setData({ currentAlbumId })
-                    return currentAlbumId
-                })
-                // 上传文件到服务器
-                .then(currentAlbumId => {
-                    // console.log(currentAlbumId)
-                    return uploadHandler(this.data.fileListRaw, 'lamb').then(res => {
-                        return res
-                    }).catch(err => {
-                        console.log(err)
-                    })
-                })
-                // 把文件信息和相册信息关联并存到数据库
-                .then(allFileUrlInfo => {
-                    let task = []
-
-                    for (let item of allFileUrlInfo) {
-                        task.push(new Promise((resolve, reject) => {
-                            wx.request({
-                                url: 'http://127.0.0.1:3001/media/create',
-                                method: 'POSt',
-                                data: {
-                                    albumId: this.data.currentAlbumId,
-                                    mediaType: item.data.match(/(\.[^.]+)$/)[1],
-                                    mediaUrl: item.data
-                                },
-                                success: (res) => {
-                                    resolve(res.data)
-                                },
-                                fail: (err) => {
-                                    reject(err)
-                                }
-                            })
-                        }))
-                    }
-
-                    return Promise.all(task)
-                })
-                // 全部上传任务完成后的后续处理
-                .then(res => {
-                    wx.navigateBack()
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            // 拿到新相册id
+            const currentAlbumId = result.data._id
+            this.setData({ currentAlbumId })
         }
-        else {
-            Promise.resolve()
-                // 上传文件到服务器
-                .then(currentAlbumId => {
-                    return uploadHandler(this.data.fileListRaw, 'lamb').then(res => {
-                        return res
-                    }).catch(err => {
-                        console.log(err)
-                    })
-                })
-                // 把文件信息和相册信息关联并存到数据库
-                .then(allFileUrlInfo => {
-                    let task = []
-
-                    for (let item of allFileUrlInfo) {
-                        task.push(new Promise((resolve, reject) => {
-                            wx.request({
-                                url: 'http://127.0.0.1:3001/media/create',
-                                method: 'POST',
-                                data: {
-                                    albumId: this.data.currentAlbumId,
-                                    mediaType: item.data.match(/(\.[^.]+)$/)[1],
-                                    mediaUrl: item.data
-                                },
-                                success: (res) => {
-                                    resolve(res.data)
-                                },
-                                fail: (err) => {
-                                    reject(err)
-                                }
-                            })
-                        }))
-                    }
-
-                    return Promise.all(task)
-                })
-                // 全部上传任务完成后的后续处理
-                .then(res => {
-                    wx.navigateBack()
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }
+        // 显示上传进度的遮罩层
+        this.setData({ show: true })
+        // 上传文件到服务器
+        let uploadTasks = await uploadHandler(this.data.fileListRaw, 'lamb', (progress) => {
+            this.setData({ progress: progress })
+            console.log(`任务进度: ${progress}%`)
+            // 全部上传任务完成后的后续处理
+            if (progress === 100) {
+                this.setData({ show: false })
+                wx.navigateBack()
+            }
+        })
+        await Promise.all(uploadTasks.map(uploadTask => uploadTask.uploadPromise))
+        // 过滤出小文件上传promise
+        let smallFileUploadPromiseArr = uploadTasks.filter(uploadTask => uploadTask.type === 'small file').map(uploadTask => uploadTask.uploadPromise)
+        // 获取小文件上传成功的结果
+        let smallFileUploadResultArr = (await Promise.all(smallFileUploadPromiseArr)).map(item => JSON.parse(item.data))
+        // 过滤出所有大文件分片的任务
+        const bigFileChunksUploadArr = uploadTasks.filter(uploadTask => uploadTask.type === 'big file')
+        // 根据fileHash去重
+        const uniqueArray = bigFileChunksUploadArr.reduce((acc, obj) => {
+            if (!acc.some(item => item.fileHash === obj.fileHash)) {
+                acc.push(obj);
+            }
+            return acc;
+        }, []);
+        // 合并
+        let mergeTaskArr = new Array(uniqueArray.length).fill(0).map((_, index) => merge(uniqueArray[index].fileHash, uniqueArray[index].fileExt, 'lamb'))
+        let bigFileUploadResultArr = await Promise.all(mergeTaskArr)
+        let allFileUrlInfo = bigFileUploadResultArr.concat(smallFileUploadResultArr)
+        // 把文件信息和相册信息关联并存到数据库
+        let tasks = new Array(allFileUrlInfo.length).fill(0).map((_, index) => http.request({
+            url: '/media/create',
+            method: 'POST',
+            data: {
+                albumId: this.data.currentAlbumId,
+                mediaType: allFileUrlInfo[index].data.match(/(\.[^.]+)$/)[1],
+                mediaUrl: allFileUrlInfo[index].data
+            }
+        }).then(res => res.data))
+        await Promise.all(tasks)
+        // 全部上传任务完成后的后续处理
+        // wx.navigateBack()
     },
 
     // 输入新建相册的名字时
@@ -133,9 +83,7 @@ Page({
 
     // 选择相册
     onWantSelect() {
-        wx.navigateTo({
-            url: '/pages/selectalbum/selectalbum',
-        })
+        wx.navigateTo({ url: '/pages/selectalbum/selectalbum' })
     },
 
     // 添加文件后
@@ -152,10 +100,17 @@ Page({
 
     // 删除待上传的文件
     onDelete(event) {
-        let fileList = this.data.fileList
+        let { fileList, fileListRaw } = this.data
         fileList.splice(event.detail.index, 1)
-        this.setData({ fileList })
+        fileListRaw.splice(event.detail.index, 1)
+        this.setData({ fileList, fileListRaw })
     },
+
+    onClickHide() {
+        this.setData({ show: false });
+    },
+
+    noop() { },
 
     // 页面加载完成后
     onLoad(options) {
