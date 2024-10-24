@@ -1,0 +1,18 @@
+<view class="nav">
+    <Navbar title="">
+        <view slot="left">
+            <van-icon name="arrow-left" bind:tap="onBack" />
+        </view>
+    </Navbar>
+</view>
+
+<view class="watermark-img">
+    <canvas style="display: none;" id="myCanvas" type="2d" />
+    <image src="{{watermarkImg}}" mode="aspectFill" />
+</view>
+
+<view class="else">
+    <slider min="{{15}}" activeColor="#1989FA" show-value bindchange="onSliderChange" value="{{watermarkFontSize}}"></slider>
+    <input type="text" value="{{watermarkText}}" bindinput="onChange" />
+    <button class="save" bind:tap="onSave">保存</button>
+</view>

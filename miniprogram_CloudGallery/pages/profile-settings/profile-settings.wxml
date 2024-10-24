@@ -1,0 +1,26 @@
+<!--pages/userinfo/userinfo.wxml-->
+<Navbar title="个人信息">
+    <view slot="left">
+        <van-icon name="arrow-left" bind:tap="onBack" />
+    </view>
+</Navbar>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+    <view class="actions">
+        <view class="item">
+            <text>头像</text>
+            <button open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+                <image class="avatar" mode="aspectFit" src="{{avatarUrl}}"></image>
+            </button>
+        </view>
+
+        <view class="item">
+            <text>昵称</text>
+            <input type="nickname" placeholder="{{nickName}}" />
+        </view>
+    </view>
+</scroll-view>
+
+<view class="save">
+    <van-button round type="info" size="large">保存</van-button>
+</view>

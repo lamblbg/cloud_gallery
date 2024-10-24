@@ -1,6 +1,7 @@
 {
     "usingComponents": {  
         "van-action-sheet": "@vant/weapp/action-sheet/index",
+        "Navbar": "../../components/Navbar/Navbar",
         "van-icon": "@vant/weapp/icon/index"
     }
 }

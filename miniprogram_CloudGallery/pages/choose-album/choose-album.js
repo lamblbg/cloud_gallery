@@ -5,6 +5,10 @@ Page({
         albums: []
     },
 
+    onBack(event){
+        wx.navigateBack()
+    },
+
     onLoad() {
         wx.request({
             url: 'http://127.0.0.1:3001/album/all',

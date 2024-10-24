@@ -1,4 +1,6 @@
 const nodeEnv = process.env.NODE_ENV || 'development'
+const appid = process.env.APP_KET || 'wx98c75a43b16875ee' // 微信小程序appid
+const appSecret = process.env.APP_SECRET || 'b3383784d52bf58d3b39a5b7f602cb96' // 微信小程序appSecret
 
 // mogoDB连接配置
 let mongoDBConnectConfig = null
@@ -32,4 +34,6 @@ else if (nodeEnv === 'production') {
 module.exports = {
   mongoDBConnectConfig,
   redisConnectConfig,
+  appid,
+  appSecret,
 }

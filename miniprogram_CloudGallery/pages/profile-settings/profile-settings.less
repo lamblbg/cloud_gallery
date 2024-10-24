@@ -1,0 +1,42 @@
+.scrollarea {
+
+    .actions {
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 100rpx;
+            max-height: fit-content;
+            border-bottom: 0.1rpx solid rgb(235, 231, 231);
+            padding: 20rpx;
+
+            button {
+                margin: 0;
+                padding: 0;
+                background-color: transparent;
+                width: 100rpx;
+                height: 100rpx;
+                border-radius: 50%;
+
+                &::after {
+                    border: none;
+                }
+            }
+
+            .avatar {
+                width: 100%;
+                height: 100%;
+            }
+
+            input {
+                text-align: right;
+            }
+        }
+    }
+}
+
+.save {
+    margin: 20rpx auto;
+    width: 96%;
+}

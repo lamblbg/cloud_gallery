@@ -1,0 +1,19 @@
+<view class="nav">
+    <Navbar title="选择相册">
+        <view slot="left">
+            <van-icon name="arrow-left" bind:tap="onBack" />
+        </view>
+    </Navbar>
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+    <view class="container">
+        <view class="item" wx:for="{{albums}}" data-albumId="{{item._id}}" bind:tap="onSelect">
+            <image src="{{item.cover}}" mode="aspectFill" />
+            <view class="info">
+                <p>{{item.name}}</p>
+                <span>{{item.mediaCount}}张</span>
+            </view>
+        </view>
+    </view>
+</scroll-view>

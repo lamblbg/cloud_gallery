@@ -1,15 +1,25 @@
+<view class="nav">
+    <Navbar>
+        <view slot="left">
+            <van-icon name="ellipsis" bind:tap="onClickEllipsis" />
+        </view>
+    </Navbar>
+</view>
+
 <scroll-view class="scrollarea" scroll-y type="list">
-    <h1 style="font-weight: bolder;">我的相册</h1>
+    <text class="my">我的相册</text>
     <view class="container">
-        <view class="item" wx:for="{{albums}}" bind:tap="onClick" data-album="{{item}}">
+        <view class="item" wx:for="{{albums}}" bind:tap="onClickAlbum" data-album="{{item}}">
             <image src="{{item.cover}}" mode="aspectFill" />
             <p>{{item.name}}</p>
-            <span>{{item.mediaCount?item.mediaCount:0}}张</span>
+            <span>{{item.mediaCount}}张</span>
         </view>
     </view>
 </scroll-view>
 
-<button class="add" bind:tap="onAdd">
-    <van-icon name="plus" />
-</button>
-<van-action-sheet show="{{ show }}" actions="{{ actions }}" cancel-text="取消" bind:close="onClose" bind:cancel="onClose" bind:select="onSelect" />
+<view class="else">
+    <button class="add" bind:tap="onChangeAdd">
+        <van-icon name="plus" />
+    </button>
+    <van-action-sheet show="{{ show }}" actions="{{ actions }}" cancel-text="取消" bind:close="onChangeAdd" bind:cancel="onChangeAdd" bind:select="onSelectMedia" />
+</view>

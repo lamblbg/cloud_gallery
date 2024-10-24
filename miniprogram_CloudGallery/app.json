@@ -1,16 +1,20 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/selectalbum/selectalbum",
-        "pages/uploadsetting/uploadsetting",
+        "pages/choose-album/choose-album",
+        "pages/upload-page/upload-page",
         "pages/register/register",
-        "pages/photo/photo"
+        "pages/album-detail/album-detail",
+        "pages/profile-settings/profile-settings",
+        "pages/add-watermark/add-watermark"
     ],
     "usingComponents": {
-        "van-button": "@vant/weapp/button/index"
+        "van-button": "@vant/weapp/button/index",
+        "van-nav-bar": "@vant/weapp/nav-bar/index"
     },
     "window": {
         "navigationBarTextStyle": "black",
+        "navigationStyle": "custom",
         "navigationBarTitleText": "云图廊",
         "navigationBarBackgroundColor": "#ffffff"
     },

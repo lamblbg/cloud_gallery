@@ -1,12 +1,21 @@
-<van-overlay show="{{ show }}" bind:click="onClickHide">
-    <view class="wrapper">
-        <view class="block" catch:tap="noop">
-            正在上传...{{progress}}%
+<view class="nav">
+    <Navbar title="上传">
+        <view slot="left">
+            <van-icon name="arrow-left" bind:tap="onBack" />
         </view>
-    </view>
-</van-overlay>
-<view class="view" class="container">
-    <scroll-view scroll-y style="max-height: 85vh;">
+    </Navbar>
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+    <van-overlay show="{{ show }}" bind:click="onClickHide">
+        <view class="wrapper">
+            <view class="block" catch:tap="noop">
+                正在上传...{{progress}}%
+            </view>
+        </view>
+    </van-overlay>
+
+    <view class="container">
         <view wx:if="{{isSelectAlbum}}" class="select_album">
             <view class="header">
                 <span>当前相册</span>
@@ -34,7 +43,9 @@
         <view class="files">
             <van-uploader accept="all" multiple file-list="{{ fileList }}" bind:after-read="afterRead" bind:delete="onDelete" image-fit="aspectFill" upload-icon="plus" />
         </view>
-    </scroll-view>
+    </view>
+</scroll-view>
 
-    <van-button bind:tap="onUpload" class="upload_btn" type="info" block round>确认上传</van-button>
+<view class="upload_btn">
+    <van-button bind:tap="onUpload" type="info" block round>确认上传</van-button>
 </view>

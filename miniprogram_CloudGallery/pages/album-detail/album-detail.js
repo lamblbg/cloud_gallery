@@ -6,51 +6,57 @@ Page({
         album: {},
         mediaList: [],
         nextDataPosition: 8,
-        total: 15
+        show: false,
+        currentImage: ''
+    },
+
+    onClickHide() {
+        this.setData({ show: false });
+    },
+
+    noop() { },
+
+    onBack(event) {
+        wx.navigateBack()
+    },
+
+    onClickAddWaterMark() {
+        wx.navigateTo({
+            url: `/pages/add-watermark/add-watermark?img=${this.data.currentImage}`,
+        })
     },
 
     onClickImage(event) {
         let { albumindex, imageindex } = event.currentTarget.dataset
-        console.log(albumindex, imageindex)
-        wx.previewImage({
-            current: this.data.mediaList[albumindex].medias[imageindex].url, // 当前显示图片的http链接
-            urls: this.data.mediaList[albumindex].medias.map(item => item.url) // 需要预览的图片http链接列表
-        })
+        let imgUrl = this.data.mediaList[albumindex].medias[imageindex].url
+        this.setData({ show: true, currentImage: imgUrl })
     },
 
     async getMedia(albumId, skip, limit) {
         let res = await http.get('/media/findAllMediaByAlbumId', {
-            albumId,
-            skip,
-            limit
+            albumId, skip, limit
         })
         let mediaList = res.data.data
         let temp = {}
         for (let item of mediaList) {
             let key = item.createTime.match(/(.*?)T.*?/)[1]
-            if (temp[key]) {
+            if (temp[key])
                 temp[key].push(item)
-            }
-            else {
+            else
                 temp[key] = [item]
-            }
         }
         let CategorizedMediaList = []
-        for (let key in temp) {
+        for (let key in temp)
             CategorizedMediaList.push({ date: key, medias: temp[key] })
-        }
         return CategorizedMediaList
     },
 
-    async onLoad() {
-        await new Promise(resolve => {
-            eventBus.$on('clickAblum', (album) => {
-                this.setData({ album })
-                resolve()
-            });
-        })
+    async onLoad(options) {
+        eventBus.$on('clickAblum', (album) => {
+            this.setData({ album })
+        });
 
-        let CategorizedMediaList = await this.getMedia(this.data.album._id, 0, this.data.nextDataPosition)
+        let CategorizedMediaList = await this.getMedia(options.album, 0, this.data.nextDataPosition)
         this.setData({ mediaList: CategorizedMediaList })
     },
 

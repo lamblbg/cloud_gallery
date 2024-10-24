@@ -1,13 +1,6 @@
-page {
-  box-sizing: border-box;
-  padding: 0 0.5em;
-}
 .album_name {
   font-weight: 600;
   font-size: larger;
-}
-.container {
-  margin-top: 20rpx;
 }
 .container .group {
   margin-bottom: 50rpx;
@@ -23,4 +16,13 @@ page {
   width: 150px;
   height: 120px;
   margin-top: 10rpx;
+}
+.container .wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  background-color: #fff;
+}
+.container .wrapper .block {
+  background-color: #fff;
 }

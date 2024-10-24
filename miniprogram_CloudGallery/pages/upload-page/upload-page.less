@@ -1,0 +1,58 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.block {
+    color: #ffffff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+
+
+        >span {
+            font-weight: bolder;
+        }
+
+        .right {
+            display: flex;
+
+            .info {
+                display: flex;
+                flex-direction: column;
+
+                span:nth-child(2) {
+                    font-size: .1em;
+                }
+            }
+
+            image {
+                margin: 0 .5em;
+                width: 50px;
+                height: 50px;
+            }
+        }
+    }
+
+    .new,
+    .files {
+        margin-top: 2em;
+    }
+
+    .new {
+        font-size: .5em;
+    }
+}
+
+.upload_btn {
+    margin: .5em;
+}

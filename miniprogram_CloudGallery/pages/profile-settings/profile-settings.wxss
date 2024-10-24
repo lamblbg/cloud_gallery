@@ -1,0 +1,31 @@
+.scrollarea .actions .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100rpx;
+  max-height: fit-content;
+  border-bottom: 0.1rpx solid #ebe7e7;
+  padding: 20rpx;
+}
+.scrollarea .actions .item button {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+}
+.scrollarea .actions .item button::after {
+  border: none;
+}
+.scrollarea .actions .item .avatar {
+  width: 100%;
+  height: 100%;
+}
+.scrollarea .actions .item input {
+  text-align: right;
+}
+.save {
+  margin: 20rpx auto;
+  width: 96%;
+}

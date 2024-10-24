@@ -17,13 +17,18 @@ Page({
         albums: []
     },
 
-    onClick(e) {
+    onClickEllipsis(e) {
         wx.navigateTo({
-            url: '/pages/photo/photo',
-        }).then(() => {
-            let clickAblum = e.currentTarget.dataset.album
-            eventBus.$emit('clickAblum', clickAblum);
+            url: '/pages/profile-settings/profile-settings',
         })
+    },
+
+    async onClickAlbum(e) {
+        let { album } = e.currentTarget.dataset
+        await wx.navigateTo({
+            url: `/pages/album-detail/album-detail?album=${album._id}`
+        })
+        eventBus.$emit('clickAblum', album);
     },
 
     async requestAlbums() {
@@ -37,19 +42,11 @@ Page({
         this.requestAlbums()
     },
 
-    onLoad() {
-        // this.requestAlbums()
+    onChangeAdd(event) {
+        this.setData({ show: !this.data.show });
     },
 
-    onClose(event) {
-        this.setData({ show: false });
-    },
-
-    onAdd(event) {
-        this.setData({ show: true });
-    },
-
-    async onSelect(event) {
+    async onSelectMedia(event) {
         try {
             let res = await wx.chooseMedia({
                 count: 9,
@@ -60,11 +57,12 @@ Page({
             })
             let allTemporaryFile = res.tempFiles
             await wx.navigateTo({
-                url: '/pages/uploadsetting/uploadsetting'
+                url: '/pages/upload-page/upload-page'
             })
             eventBus.$emit('getChooseAlbum', this.data.albums[0]);
             eventBus.$emit('getAllTemporaryFile', allTemporaryFile);
         } catch (error) {
+            console.info("用户选择终止上传文件", error.message)
         }
     },
 })

@@ -1,0 +1,6 @@
+<van-nav-bar fixed placeholder title="{{title}}">
+    <view slot="left">
+        <slot name="left">
+        </slot>
+    </view>
+</van-nav-bar>

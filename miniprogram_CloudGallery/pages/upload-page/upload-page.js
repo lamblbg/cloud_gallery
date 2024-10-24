@@ -14,6 +14,10 @@ Page({
         progress: 0
     },
 
+    onBack(event) {
+        wx.navigateBack()
+    },
+
     // 确认上传按钮
     async onUpload(event) {
         // 如果是选择创建新相册
@@ -35,7 +39,7 @@ Page({
         this.setData({ show: true })
         // 上传文件到服务器
         let uploadTasks = await uploadHandler(this.data.fileListRaw, 'lamb', (progress) => {
-            this.setData({ progress: progress })
+            this.setData({ progress })
             console.log(`任务进度: ${progress}%`)
             // 全部上传任务完成后的后续处理
             if (progress === 100) {
@@ -44,6 +48,7 @@ Page({
             }
         })
         await Promise.all(uploadTasks.map(uploadTask => uploadTask.uploadPromise))
+
         // 过滤出小文件上传promise
         let smallFileUploadPromiseArr = uploadTasks.filter(uploadTask => uploadTask.type === 'small file').map(uploadTask => uploadTask.uploadPromise)
         // 获取小文件上传成功的结果
@@ -73,7 +78,7 @@ Page({
         }).then(res => res.data))
         await Promise.all(tasks)
         // 全部上传任务完成后的后续处理
-        // wx.navigateBack()
+
     },
 
     // 输入新建相册的名字时
@@ -83,7 +88,7 @@ Page({
 
     // 选择相册
     onWantSelect() {
-        wx.navigateTo({ url: '/pages/selectalbum/selectalbum' })
+        wx.navigateTo({ url: '/pages/choose-album/choose-album' })
     },
 
     // 添加文件后

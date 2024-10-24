@@ -1,0 +1,31 @@
+<view class="nav">
+    <Navbar title="{{album.name}}">
+        <view slot="left">
+            <van-icon name="arrow-left" bind:tap="onBack" />
+        </view>
+    </Navbar>
+</view>
+
+<scroll-view class="scrollarea" scroll-y type="list">
+    <view class="container">
+        <view class="group" wx:for="{{mediaList}}" wx:for-item="ml" wx:for-index="albumIndex">
+            <span class="date">{{ml.date}}</span>
+            <view class="medias">
+                <image lazy-load="true" wx:for="{{ml.medias}}" wx:for-item="media" wx:for-index="imageIndex" src="{{media.url}}" data-albumIndex="{{albumIndex}}" data-imageIndex="{{imageIndex}}" mode="aspectFill" bind:tap="onClickImage" />
+            </view>
+        </view>
+
+        <van-overlay show="{{ show }}" bind:click="onClickHide">
+            <view class="wrapper">
+                <view class="block" catch:tap="noop">
+                    <image src="{{currentImage}}" mode="aspectFit" />
+                </view>
+
+                <van-tabbar catch:tap="noop">
+                    <van-tabbar-item icon="down">下载</van-tabbar-item>
+                    <van-tabbar-item bind:tap="onClickAddWaterMark" icon="shield-o">添加水印</van-tabbar-item>
+                </van-tabbar>
+            </view>
+        </van-overlay>
+    </view>
+</scroll-view>

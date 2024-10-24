@@ -1,24 +1,18 @@
-page {
-  box-sizing: border-box;
-  padding: 0 0.5em;
-}
-.item {
+.container .item {
   display: flex;
   align-items: center;
-}
-.item:nth-child(n+2) {
   margin-top: 15px;
 }
-.item image {
+.container .item image {
   width: 70px;
   height: 70px;
   margin-right: 10px;
 }
-.item .info {
+.container .item .info {
   display: flex;
   flex-direction: column;
 }
-.item .info p {
+.container .item .info p {
   font-size: 1.2em;
   font-weight: bolder;
 }

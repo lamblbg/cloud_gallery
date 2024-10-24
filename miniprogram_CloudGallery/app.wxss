@@ -1,0 +1,26 @@
+view,
+scroll-view {
+    box-sizing: border-box;
+}
+
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+        Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+        sans-serif;
+
+}
+
+.scrollarea {
+    margin: 40rpx 0 0;
+    padding: 0 .5em;
+    flex: 1;
+    overflow-y: hidden;
+}
+
+.container{
+    padding-bottom: 20rpx;
+}

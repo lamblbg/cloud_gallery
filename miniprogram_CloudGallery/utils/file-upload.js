@@ -1,13 +1,14 @@
 const SparkMD5 = require('./spark-md5.js');
 import http from './http.js';
 
+
 // 传入一个待上传的allTempFiles文件数组，每个元素要有url、size属性  
 export async function uploadHandler(allTempFiles, userName, progressCallback, chunkSize = 1024 * 1024 * 1) { // 1MB  
     let newAllTempFiles = []
-    // let fileMD5 = '', fileExtension = '';
+    allTempFiles = await compress(allTempFiles)
     let totalFileSize = allTempFiles.reduce((prev, cur) => prev += cur.size, 0)
     let uploadedProgressArr = []
-    
+
     function handleUploadProgress(progressCallback, index) {
         return (res) => {
             if (progressCallback && typeof progressCallback === 'function') {
@@ -19,6 +20,7 @@ export async function uploadHandler(allTempFiles, userName, progressCallback, ch
     }
 
     for (let item of allTempFiles) {
+
         if (item.size <= chunkSize) {
             newAllTempFiles.push(item)
         }
@@ -50,6 +52,28 @@ export async function uploadHandler(allTempFiles, userName, progressCallback, ch
         }
     })
     return uploadTasks;
+}
+
+// 压缩
+async function compress(fileList) {
+    for (let item of fileList) {
+        // 更新上传的文件为压缩后的文件
+        let res = await wx.compressImage({
+            src: item.url,
+            quality: 12
+        })
+        item.url = res.tempFilePath
+
+        // 更新文件大小为压缩后的文件的大小
+        let fileInfo = await new Promise(resolve => {
+            wx.getFileSystemManager().getFileInfo({
+                filePath: item.url,
+                success: resolve
+            })
+        })
+        item.size = fileInfo.size
+    }
+    return fileList
 }
 
 // 读大文件

@@ -10,6 +10,20 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/add-watermark/add-watermark",
+          "pathName": "pages/add-watermark/add-watermark",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/userinfo/userinfo",
+          "pathName": "pages/userinfo/userinfo",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/uploadsetting/uploadsetting",
           "pathName": "pages/uploadsetting/uploadsetting",
           "query": "show=true",

@@ -2,12 +2,19 @@ const { Schema } = require('mongoose');
 
 
 module.exports = new Schema({
+    // openid
+    openid: {
+        type: String,
+    },
     // 用户账号
     account: {
         type: String,
     },
     // 用户密码
     password: {
+        type: String,
+    },
+    nickName: {
         type: String,
     },
     // 用户头像
