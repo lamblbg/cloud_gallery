@@ -41,7 +41,7 @@
         </view>
 
         <view class="files">
-            <van-uploader accept="all" multiple file-list="{{ fileList }}" bind:after-read="afterRead" bind:delete="onDelete" image-fit="aspectFill" upload-icon="plus" />
+            <van-uploader accept="all" multiple file-list="{{ fileUrls }}" bind:after-read="afterRead" bind:delete="onDelete" image-fit="aspectFill" upload-icon="plus" />
         </view>
     </view>
 </scroll-view>

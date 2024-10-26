@@ -38,9 +38,10 @@ module.exports = class Upload {
                 let singleFileDirPath = path.join(Upload.userRootDirPath, file.fieldname)
                 if (!fs.existsSync(singleFileDirPath))
                     fs.mkdirSync(singleFileDirPath, { recursive: true });
-                const oldFileName = file.originalname.match(/(.+)\.[^.]+$/)[1]
+                // const oldFileName = file.originalname.match(/(.+)\.[^.]+$/)[1]
                 const ext = file.originalname.match(/(\.[^.]+)$/)[1]
-                Upload.fileNewName = oldFileName + Math.random().toString().slice(5) + ext
+                // Upload.fileNewName = oldFileName + Math.random().toString().slice(5) + ext
+                Upload.fileNewName = fileHash + ext
                 cb(null, path.join(file.fieldname, Upload.fileNewName))
             }
         }
@@ -149,8 +150,10 @@ module.exports = class Upload {
         const chunkDirPath = path.join(Upload.publicPath, user, Upload.chunkDirPath, fileHash)
         const largeFilePath = path.join(Upload.publicPath, user, Upload.largeFileDirPath, fileHash + ext)
 
+        let accessPath = `${SERVER}/${user + Upload.largeFileDirPath}/${fileHash + ext}`
+
         if (fs.existsSync(largeFilePath)) {
-            return ctx.body = { code: 0, message: '文件已存在，不需上传' }
+            return ctx.body = { code: 0, message: '文件已存在，不需上传', data: accessPath }
         }
         else {
             if (!fs.existsSync(chunkDirPath)) {

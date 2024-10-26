@@ -2,12 +2,13 @@ const SparkMD5 = require('./spark-md5.js');
 import http from './http.js';
 
 
-// 传入一个待上传的allTempFiles文件数组，每个元素要有url、size属性  
+// 传入一个待上传的allTempFiles文件数组，每个元素要有url、size、type属性  
 export async function uploadHandler(allTempFiles, userName, progressCallback, chunkSize = 1024 * 1024 * 1) { // 1MB  
-    let newAllTempFiles = []
-    allTempFiles = await compress(allTempFiles)
-    let totalFileSize = allTempFiles.reduce((prev, cur) => prev += cur.size, 0)
-    let uploadedProgressArr = []
+    let newAllTempFiles = [], uploadedProgressArr = [], totalFileSize = 0
+    // 压缩媒体
+    let compressedFiles = await compress(allTempFiles)
+    // 计算媒体压缩后的总大小
+    totalFileSize = compressedFiles.reduce((prev, cur) => prev += cur.size, 0)
 
     function handleUploadProgress(progressCallback, index) {
         return (res) => {
@@ -19,37 +20,45 @@ export async function uploadHandler(allTempFiles, userName, progressCallback, ch
         }
     }
 
-    for (let item of allTempFiles) {
+    // 处理出一个新的待上传文件列表
+    for (let tempFile of compressedFiles) {
+        // 读文件，获取md5
+        let fileArrayBuffer = await readFile(tempFile.url);
+        let fileMD5 = SparkMD5.hashBinary(fileArrayBuffer.data);
 
-        if (item.size <= chunkSize) {
-            newAllTempFiles.push(item)
+        // 小文件直接加入
+        if (tempFile.size <= chunkSize) {
+            tempFile.fileHash = fileMD5
+            newAllTempFiles.push(tempFile)
         }
+        // 大文件分割成切片后加入
         else {
-            // 读大文件  
-            let fileArrayBuffer = await readBigFile(item);
-            let fileMD5 = SparkMD5.hashBinary(fileArrayBuffer.data);
-            let fileExtension = item.url.match(/(\.[^.]+)$/)[1];
+            let fileExtension = tempFile.url.match(/(\.[^.]+)$/)[1];
             // 分片  
-            let fileChunks = await _sharding(fileArrayBuffer, chunkSize, fileMD5, fileExtension)
+            let fileChunks = await _sharding(fileArrayBuffer.data, chunkSize, fileMD5, fileExtension)
             newAllTempFiles.push(...fileChunks)
         }
     }
-    
+
+    // 到此newAllTempFiles的数据结构如下
+    // 小文件：{ type, url, size, fileMD5 }
+    // 大文件的分片：{ fileHash, chunkHash, chunkPath, fileExtension }
+
+    // 处理出一个上传任务列表
     let uploadTasks = newAllTempFiles.map((item, index) => {
-        if (item.size) {
+        let task = _upload(item, userName, handleUploadProgress(progressCallback, index));
+
+        if (item.hasOwnProperty('size')) {
             console.log('小文件');
-            let task = _upload(false, item.url, userName, handleUploadProgress(progressCallback, index));
-            task.type = 'small file'
-            return task
+            task.isChunk = false
         }
         else {
             console.log('大文件的分片');
-            let task = _upload(true, item, userName, handleUploadProgress(progressCallback, index));
-            task.type = 'big file'
+            task.isChunk = true
             task.fileHash = item.fileHash
             task.fileExt = item.fileExtension
-            return task
         }
+        return task
     })
     return uploadTasks;
 }
@@ -76,22 +85,21 @@ async function compress(fileList) {
     return fileList
 }
 
-// 读大文件
-async function readBigFile(TempFiles) {
+// 读文件
+export async function readFile(filePath) {
     return new Promise((resolve, reject) => {
         wx.getFileSystemManager().readFile({
-            filePath: TempFiles.url,
+            filePath: filePath,
             encoding: 'binary', // 读取为ArrayBuffer    
-            success: res => resolve(res),
-            fail: err => reject(err)
+            success: resolve,
+            fail: reject
         });
     });
 }
 
 // 分片
 async function _sharding(fileArrayBuffer, chunkSize, fileMD5, fileExtension) {
-    let fileData = fileArrayBuffer.data;
-    let fileLength = fileData.length;
+    let fileLength = fileArrayBuffer.length;
     let startOffset = 0;
     let chunkQuantity = Math.ceil(fileLength / chunkSize);
 
@@ -113,9 +121,7 @@ async function _sharding(fileArrayBuffer, chunkSize, fileMD5, fileExtension) {
                     };
                     resolve(chunkInfo);
                 },
-                fail: err => {
-                    reject(err);
-                }
+                fail: reject
             });
         });
     }
@@ -123,11 +129,11 @@ async function _sharding(fileArrayBuffer, chunkSize, fileMD5, fileExtension) {
     async function handleChunk(index) {
         if (index >= chunkQuantity) return;
 
-        let chunk = fileData.slice(startOffset, startOffset + chunkSize);
+        let chunk = fileArrayBuffer.slice(startOffset, startOffset + chunkSize);
         startOffset += chunkSize;
         if (startOffset > fileLength) {
             // 处理最后一个分片可能不足chunkSize的情况    
-            chunk = fileData.slice(startOffset - chunkSize, fileLength);
+            chunk = fileArrayBuffer.slice(startOffset - chunkSize, fileLength);
         }
         // 将分片保存到本地临时目录   
         return await writeChunkToTempFile(chunk, fileMD5, index);
@@ -138,10 +144,11 @@ async function _sharding(fileArrayBuffer, chunkSize, fileMD5, fileExtension) {
 }
 
 // 上传文件   
-function _upload(isLargeFile, filePathOrChunkInfo, userName, onProgressUpdate) {
-    if (!isLargeFile) {
-        return http.upload('/upload/single', filePathOrChunkInfo, 'album', {
-            user: userName
+function _upload(filePathOrChunkInfo, userName, onProgressUpdate) {
+    if (!filePathOrChunkInfo.hasOwnProperty('chunkHash')) {
+        return http.upload('/upload/single', filePathOrChunkInfo.url, 'album', {
+            user: userName,
+            fileHash: filePathOrChunkInfo.fileHash
         }, null, onProgressUpdate);
     }
     else {
